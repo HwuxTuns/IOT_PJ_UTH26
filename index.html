@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ Thống Giám Sát Tấm Pin Năng Lượng Mặt Trời</title>
+  <meta name="description" content="Dashboard giám sát real-time tấm pin năng lượng mặt trời - IoT Solar Panel Monitoring System" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== TOP NAVBAR ===== -->
+  <nav class="topbar" id="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-icon">☀️</span>
+        <span class="logo-text">Solar<span class="logo-accent">Monitor</span></span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="connection-status" id="connectionStatus">
+        <span class="conn-dot"></span>
+        <span class="conn-text">Đang kết nối...</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-icon-sun">🌞</span>
+        <span class="theme-icon-moon">🌙</span>
+      </button>
+      <div class="datetime" id="datetime"></div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- HERO SECTION -->
+    <section class="solar-hero" id="heroSection">
+      <div class="hero-bg-glow"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Hệ thống giám sát tấm pin năng lượng mặt trời</h1>
+        <p class="hero-subtitle">Real-time IoT Dashboard · Proteus COMPIM Simulation</p>
+        <div class="status-pills">
+          <span class="status-pill is-online" id="pillOnline">
+            <span class="pill-dot"></span>Online
+          </span>
+          <span class="status-pill is-charging" id="pillCharging">
+            <span class="pill-dot"></span>Đang sạc
+          </span>
+          <span class="status-pill is-sun" id="pillSun">
+            <span class="pill-dot"></span>Ánh sáng tốt
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI CARDS -->
+    <section class="solar-kpis" id="kpiSection">
+      <div class="kpi-card" data-kpi="panel">
+        <div class="kpi-icon">🔋</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Mã Tấm Pin</span>
+          <span class="kpi-value" id="kpiPanelId">PANEL-001</span>
+        </div>
+      </div>
+      <div class="kpi-card" data-kpi="voltage">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Điện Áp</span>
+          <span class="kpi-value" id="kpiVoltage"><span class="kpi-number">--</span><span class="kpi-unit">V</span></span>
+        </div>
+      </div>
+      <div class="kpi-card" data-kpi="current">
+        <div class="kpi-icon">🔌</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Dòng Điện</span>
+          <span class="kpi-value" id="kpiCurrent"><span class="kpi-number">--</span><span class="kpi-unit">A</span></span>
+        </div>
+      </div>
+      <div class="kpi-card" data-kpi="power">
+        <div class="kpi-icon">💡</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Công Suất</span>
+          <span class="kpi-value" id="kpiPower"><span class="kpi-number">--</span><span class="kpi-unit">W</span></span>
+        </div>
+      </div>
+      <div class="kpi-card" data-kpi="light">
+        <div class="kpi-icon">☀️</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Cường Độ Sáng</span>
+          <span class="kpi-value" id="kpiLight"><span class="kpi-number">--</span><span class="kpi-unit">lux</span></span>
+        </div>
+      </div>
+      <div class="kpi-card" data-kpi="angle">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-info">
+          <span class="kpi-label">Góc Servo</span>
+          <span class="kpi-value" id="kpiAngle"><span class="kpi-number">90</span><span class="kpi-unit">°</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVO CONTROL -->
+    <section class="grid-row">
+      <div class="chart-card col-12">
+        <div class="card-header">
+          <h2 class="card-title">🎮 Điều Khiển Servo</h2>
+          <span class="card-badge" id="servoStatus">Tự động</span>
+        </div>
+        <div class="servo-control-wrap">
+          <div class="servo-visual">
+            <div class="servo-arc">
+              <div class="servo-needle" id="servoNeedle" style="transform: rotate(90deg);"></div>
+              <span class="servo-label-left">0°</span>
+              <span class="servo-label-center" id="servoAngleDisplay">90°</span>
+              <span class="servo-label-right">180°</span>
+            </div>
+          </div>
+          <div class="servo-slider-group">
+            <input type="range" id="servoSlider" min="0" max="180" value="90" class="servo-slider" />
+            <div class="servo-buttons">
+              <button class="servo-btn" data-angle="0">0°</button>
+              <button class="servo-btn" data-angle="45">45°</button>
+              <button class="servo-btn" data-angle="90">90°</button>
+              <button class="servo-btn" data-angle="135">135°</button>
+              <button class="servo-btn" data-angle="180">180°</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS ROW 1: Daily (8-col) + Status (4-col) -->
+    <section class="grid-row">
+      <div class="chart-card col-8">
+        <div class="card-header">
+          <h2 class="card-title">📈 Công Suất Trong Ngày</h2>
+          <span class="card-badge">Hôm nay</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartDailyPower"></canvas>
+        </div>
+      </div>
+      <div class="chart-card col-4">
+        <div class="card-header">
+          <h2 class="card-title">📊 Trạng Thái Hệ Thống</h2>
+        </div>
+        <div class="chart-wrap chart-wrap-doughnut">
+          <canvas id="chartSystemStatus"></canvas>
+          <div class="doughnut-center" id="doughnutCenter">
+            <span class="doughnut-value">--%</span>
+            <span class="doughnut-label">Đang sạc</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS ROW 2: Realtime (6-col) + Device Info (6-col) -->
+    <section class="grid-row">
+      <div class="chart-card col-6">
+        <div class="card-header">
+          <h2 class="card-title">⚡ Real-time Voltage & Current</h2>
+          <span class="card-badge live-badge">● LIVE</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartRealtime"></canvas>
+        </div>
+      </div>
+      <div class="chart-card col-6">
+        <div class="card-header">
+          <h2 class="card-title">🔧 Thông Tin Thiết Bị</h2>
+        </div>
+        <div class="device-info-wrap">
+          <table class="solar-info-table" id="deviceInfoTable">
+            <tbody>
+              <tr><td class="info-label">Mã Panel</td><td class="info-value">PANEL-001</td></tr>
+              <tr><td class="info-label">Vị trí</td><td class="info-value">Rooftop A</td></tr>
+              <tr><td class="info-label">Góc Servo</td><td class="info-value" id="infoAngle">90°</td></tr>
+              <tr><td class="info-label">Trạng thái</td><td class="info-value"><span class="badge-active" id="infoStatus">Connecting...</span></td></tr>
+              <tr><td class="info-label">Firmware</td><td class="info-value">v2.0.0</td></tr>
+              <tr><td class="info-label">Baud Rate</td><td class="info-value">9600</td></tr>
+              <tr><td class="info-label">Serial Port</td><td class="info-value">COM3 (COMPIM)</td></tr>
+              <tr><td class="info-label">Uptime</td><td class="info-value" id="infoUptime">0h 0m</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY TABLE -->
+    <section class="grid-row">
+      <div class="chart-card col-12">
+        <div class="card-header">
+          <h2 class="card-title">📋 Lịch Sử Đo Lường (Trung Bình Mỗi Phút)</h2>
+          <div class="filter-chips" id="filterChips">
+            <button class="chip is-active" data-filter="1">Hôm nay</button>
+            <button class="chip" data-filter="3">3 ngày</button>
+            <button class="chip" data-filter="7">7 ngày</button>
+            <button class="chip" data-filter="30">30 ngày</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="solar-history-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Điện áp (V)</th>
+                <th>Dòng điện (A)</th>
+                <th>Công suất (W)</th>
+                <th>Ánh sáng (lux)</th>
+                <th>Góc Servo</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 IoT Solar Monitor · Version 2.0.0 · Arduino UNO + Proteus COMPIM</p>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

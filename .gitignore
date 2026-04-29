@@ -1,0 +1,22 @@
+# Dependencies
+backend/node_modules/
+backend/package-lock.json
+
+# Environment (chứa password/secret)
+backend/.env
+
+# Logs
+backend/logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
