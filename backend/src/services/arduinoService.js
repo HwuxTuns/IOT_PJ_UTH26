@@ -19,13 +19,14 @@ try {
 }
 
 const logger = require('./logger');
+const { _broadcast } = require('./websocketService');
 
 class ArduinoService {
   constructor() {
     this.port = null;
     this.parser = null;
     this.baudRate = 9600;
-    this.portPath = process.env.ARDUINO_PORT || 'COM3';
+    this.portPath = process.env.ARDUINO_PORT || 'COM5';
     this.reconnectInterval = 5000;
     this.onDataCallback = null;
     this.isConnected = false;
@@ -108,7 +109,8 @@ class ArduinoService {
    * Example: "PANEL-001|18.50|5.20|96.20|4500|90"
    */
   parseData(line) {
-    const parts = line.toString().trim().split('|');
+    console.log("==> Nhận được từ Proteus:", line);
+    const parts = line.toString().trim().split(',');
     if (parts.length < 6) return null;
 
     const data = {
@@ -119,11 +121,13 @@ class ArduinoService {
       lightIntensity: parseInt(parts[4]),
       servoAngle: parseInt(parts[5]),
     };
+    
 
     if (isNaN(data.voltage) || isNaN(data.current)) return null;
-    if (!/^PANEL-\d{3}$/.test(data.panelId)) return null;
 
     return data;
+  }catch(err){
+    return null;
   }
 
   /**

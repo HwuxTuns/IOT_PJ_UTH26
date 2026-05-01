@@ -19,7 +19,7 @@ import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # === CẤU HÌNH ===
-SERIAL_PORT = 'COM4'       # Đầu bên kia của cặp VSPE (Proteus dùng COM3)
+SERIAL_PORT = 'COM5'       # Đầu bên kia của cặp VSPE (Proteus dùng COM1)
 BAUD_RATE = 9600
 API_URL = 'http://localhost:5000/api/readings'
 BRIDGE_PORT = 5001          # Port nhận lệnh servo từ backend

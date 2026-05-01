@@ -9,8 +9,8 @@ function getPool() {
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT || '3306'),
       database: process.env.DB_NAME || 'iot_solar_db',
-      user: process.env.DB_USER || 'solar_user',
-      password: process.env.DB_PASSWORD || 'solar_pass123',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD ,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
@@ -54,6 +54,7 @@ const db = {
       return true;
     } catch (error) {
       logger.error('Database connection failed:', error.message);
+      console.error('Database connection failed:', error);
       return false;
     }
   },
