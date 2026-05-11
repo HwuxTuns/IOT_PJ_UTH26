@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   mysql:
@@ -19,19 +18,6 @@ services:
       interval: 10s
       retries: 5
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file: ./backend/.env
-    environment:
-      DB_HOST: mysql
-    ports:
-      - "${PORT:-5000}:${PORT:-5000}"
-    depends_on:
-      mysql:
-        condition: service_healthy
-
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
@@ -39,9 +25,7 @@ services:
       PMA_USER: ${DB_USER:-solar_user}
       PMA_PASSWORD: ${DB_PASSWORD:-solar_pass123}
     ports:
-      - "8080:80"
-    profiles:
-      - dev
+      - "8888:80"
 
 volumes:
   mysql_data:

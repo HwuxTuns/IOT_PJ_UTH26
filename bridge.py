@@ -69,8 +69,11 @@ def start_servo_server():
 
 
 def parse_line(line):
-    """Parse: PANEL-001|18.50|5.20|96.20|4500|90"""
-    parts = line.strip().split('|')
+    """Parse: PANEL-001|18.50|5.20|96.20|4500|90 hoặc dùng dấu phẩy"""
+    if '|' in line:
+        parts = line.strip().split('|')
+    else:
+        parts = line.strip().split(',')
     if len(parts) < 6:
         return None
     try:
