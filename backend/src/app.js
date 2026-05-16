@@ -35,8 +35,8 @@ app.use(requestLogger);
 
 // ─── Rate Limiting (POST endpoints) ───
 const postLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10000, // Cho phép tối đa 10000 request/phút (thoải mái cho IoT gửi từng giây)
   message: { success: false, error: 'Too many requests. Try again later.' },
   standardHeaders: true,
   legacyHeaders: false,

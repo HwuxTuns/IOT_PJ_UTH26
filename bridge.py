@@ -154,7 +154,7 @@ def main():
     except serial.SerialException as e:
         print(f"❌ Cannot open {SERIAL_PORT}: {e}")
         print("   → Kiểm tra VSPE đã tạo cặp COM port chưa")
-        print("   → Kiểm tra Proteus có đang dùng COM3 không")
+        print("   → Kiểm tra Proteus có đang dùng đúng cổng COM không")
         sys.exit(1)
 
     print(f"✅ Connected to {SERIAL_PORT}")

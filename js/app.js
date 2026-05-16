@@ -121,6 +121,7 @@ function connectWebSocket() {
       const { type, data } = JSON.parse(event.data);
       if (type === 'new-reading') handleNewReading(data);
       if (type === 'status-change') handleStatusChange(data);
+      if (type === 'alert') handleAlert(data);
       if (type === 'welcome') console.log('WS:', data.message);
     } catch (e) {
       console.error('WS parse error:', e);
@@ -183,6 +184,11 @@ function handleStatusChange(data) {
   showToast(`Trạng thái ${data.panelId}: ${data.state}`, 'info');
   // Refresh status chart with real data
   fetchStatusData();
+}
+
+function handleAlert(data) {
+  const toastType = data.severity === 'danger' ? 'error' : data.severity;
+  showToast(`⚠️ ${data.message}`, toastType, 8000);
 }
 
 function updateKPIValue(id, value, unit) {

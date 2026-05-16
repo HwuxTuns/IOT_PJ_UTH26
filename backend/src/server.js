@@ -47,8 +47,9 @@ async function startServer() {
       aggregationService.addReading(sensorData);
     });
 
-    await arduinoService.connect();
-    logger.info('🔌 Arduino connected via Proteus COMPIM');
+    // TẠM KHÓA: Trả lại cổng COM5 cho Python Bridge theo đúng báo cáo
+    // await arduinoService.connect();
+    logger.info('🔌 Tắt kết nối COM nội bộ để nhường quyền cho Python Bridge');
   } catch (error) {
     logger.warn(`Arduino not connected: ${error.message}. Running without serial data.`);
   }

@@ -15,6 +15,7 @@ class AggregationService {
     this.buffer = {};      // { 'PANEL-001': [ {voltage, current, ...}, ... ] }
     this.lastReading = {};  // Latest reading per panel (for real-time display)
     this.aggregateInterval = null;
+    this.lastAlertTime = {}; // Throttle alerts
   }
 
   /**
@@ -68,8 +69,60 @@ class AggregationService {
       timestamp: new Date().toISOString(),
     };
 
+    // ─── TỰ ĐỘNG KIỂM TRA CẢNH BÁO ───
+    this._checkAlerts(data);
+
     // Broadcast real-time to all WebSocket clients
     wsService.broadcastReading(this.lastReading[panelId]);
+  }
+
+  /**
+   * Kiểm tra các ngưỡng giới hạn và phát cảnh báo
+   */
+  _checkAlerts(data) {
+    const { panelId, voltage, current, power, lightIntensity } = data;
+    const now = Date.now();
+    
+    if (!this.lastAlertTime[panelId]) this.lastAlertTime[panelId] = 0;
+    
+    // Giới hạn 10 giây mới thông báo 1 lần cho mỗi panel để tránh spam liên tục
+    if (now - this.lastAlertTime[panelId] < 10000) return;
+
+    let alertMsg = null;
+    let severity = 'warning'; // 'warning' hoặc 'danger'
+
+    if (voltage > 30) {
+      alertMsg = `Quá áp (${voltage.toFixed(1)}V)! Nguy cơ hỏng hệ thống.`;
+      severity = 'danger';
+    } else if (current > 10) {
+      alertMsg = `Quá dòng (${current.toFixed(1)}A)!`;
+      severity = 'danger';
+    } else if (power > 300) {
+      alertMsg = `Quá tải công suất (${power.toFixed(1)}W)!`;
+      severity = 'danger';
+    } else if (voltage < 5 && lightIntensity > 800) {
+      alertMsg = `Điện áp thấp bất thường (${voltage.toFixed(1)}V) khi trời nắng gắt. Pin có thể bị hỏng.`;
+      severity = 'warning';
+    }
+
+    if (alertMsg) {
+      this.lastAlertTime[panelId] = now;
+      
+      // 1. Gửi qua WebSocket cho Frontend hiển thị Toast
+      wsService.broadcastAlert({
+        panelId,
+        message: alertMsg,
+        severity,
+        timestamp: new Date().toISOString()
+      });
+      logger.warn(`ALERT [${panelId}]: ${alertMsg}`);
+      
+      // 2. Lưu vào DB để làm lịch sử cảnh báo
+      db.query(
+        `INSERT INTO alerts (panel_id, severity, title, message) VALUES (?, ?, ?, ?)`,
+        [panelId, severity === 'danger' ? 'high' : 'medium', 'System Auto Alert', alertMsg]
+      ).catch(e => logger.error('Failed to save alert to DB:', e.message));
+    }
   }
 
   /**
